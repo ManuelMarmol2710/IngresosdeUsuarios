@@ -1,0 +1,280 @@
+package Ingresodeusuarios;
+
+
+
+
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.sql.*;
+import java.util.ArrayList;
+import javax.swing.*;
+
+
+
+public class SegundaVentana extends JFrame {
+
+	private JPanel contentPane;
+
+	private JTextField textField, textField1,textField2,textField3,textField4,textField5;
+	private JLabel usuario,edad,genero,correo,ID,telefono;
+	private JButton botonagregar,botoneliminar,botonmostrar,botonactu;
+	private DefaultListModel<String> modelo = new DefaultListModel<String>();
+	private JList<String> model;
+	private ArrayList<String> lista = new ArrayList<String>();
+	JList list = new JList<>();
+	private Connection connct;
+	private Statement Statementt;
+	private ResultSet rese;
+	private PreparedStatement preSta;
+	
+	public SegundaVentana() {
+		
+	
+		setBounds(100, 100, 681, 432);
+		contentPane = new JPanel();
+		contentPane.setBackground(UIManager.getColor("Button.background"));
+	    setContentPane(contentPane);
+		
+		
+		usuario = new JLabel("Nombre:");
+		usuario.setBounds(10, 10, 100, 30);
+	    add(usuario);
+		
+		textField = new JTextField();
+		textField.setBounds(69, 15, 150, 20);
+		add(textField);
+		
+		
+		edad = new JLabel("Edad:");
+		edad.setBounds(10, 50, 68, 14);
+		add(edad);
+		
+		textField1 = new JTextField();
+		textField1.setBounds(69, 48, 150, 20);
+		add(textField1);
+
+		
+		genero = new JLabel("Genero:");
+		genero.setBounds(10, 75, 100, 30);
+	    add(genero);
+		
+		textField2 = new JTextField();
+		textField2.setBounds(69, 80, 150, 20);
+		add(textField2);
+		
+		
+		correo = new JLabel("Correo:");
+		correo.setBounds(10, 116, 46, 14);
+	    add(correo);
+		
+		textField3 = new JTextField();
+		textField3.setBounds(69, 116, 150, 20);
+		add(textField3);
+		
+		
+		ID = new JLabel("ID:");
+		ID.setBounds(10, 150, 46, 14);
+		add(ID);
+		
+		textField4 = new JTextField();
+		textField4.setBounds(69, 147, 150, 20);
+		add(textField4);
+
+		
+		 telefono = new JLabel("Telefono:");
+	     telefono.setBounds(10, 188, 122, 14);
+		 add(telefono);
+		
+		textField5 = new JTextField();
+		textField5.setBounds(69, 184, 150, 20);
+		add(textField5);
+		
+		
+		
+		
+		
+		
+		
+		botonagregar = new JButton("Agregar");
+		botonagregar.setBounds(10, 239, 89, 23);
+	    add(botonagregar);
+		botonagregar.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+			     String dato = textField.getText();
+			     lista.add(dato);
+			     String dato1 = textField1.getText();
+			     lista.add(dato1);
+			     String dato2 = textField2.getText();
+			     lista.add(dato2);
+			     String dato3 = textField3.getText();
+			     lista.add(dato3);
+			     String dato4 = textField4.getText();
+		         lista.add(dato4);
+			     String dato5 = textField5.getText();
+				 lista.add(dato5);
+	             JOptionPane.showMessageDialog(null, "Ha sido ingresado correctamente");
+			
+			try {
+		    connct = DriverManager.getConnection("jdbc:mysql://localhost/ingreso", "root", "");	
+		    System.out.println("Conexion establecida");
+		    preSta = connct.prepareStatement("insert into usuario values(?,?,?,?,?,?)");
+			preSta.setString(1,textField.getText());
+			preSta.setString(2,textField1.getText());
+			preSta.setString(3,textField2.getText());
+			preSta.setString(4,textField3.getText());
+			preSta.setString(5,textField4.getText());
+			preSta.setString(6,textField5.getText());
+			preSta.executeUpdate();
+	
+			
+			} catch(Exception a) {
+				System.out.println("NO CONECTA");
+				a.printStackTrace();
+			}
+		     try { 
+		    	 preSta.close();
+            } catch (SQLException a) {
+                a.printStackTrace();
+            }
+			
+		}
+			
+		});
+		
+		
+		botoneliminar = new JButton("Eliminar");
+		botoneliminar.setBounds(10, 276, 89, 23);
+	    add(botoneliminar);
+		botoneliminar.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+			
+		int eliminar = list.getSelectedIndex();
+		modelo.remove(eliminar);		
+		try {
+		    connct = DriverManager.getConnection("jdbc:mysql://localhost/ingreso", "root", "");	
+		    System.out.println("Conexion establecida");
+		    preSta = connct.prepareStatement("delete from usuario where Nombre = ?, Edad = ?, Genero = ?, Correo = ?, ID = ?, Telefono = ?");
+		    preSta.setString(1,textField.getText());
+			preSta.setString(2,textField1.getText());
+			preSta.setString(3,textField2.getText());
+			preSta.setString(4,textField3.getText());
+			preSta.setString(5,textField4.getText());
+			preSta.setString(6,textField5.getText());
+			preSta.executeUpdate();
+			JOptionPane.showMessageDialog(null, "Ha sido eliminado correctamente");
+		} catch(Exception a) {
+			System.out.println("NO CONECTADO AL BD");
+			a.printStackTrace();
+		}
+	     try { 
+	    	 preSta.close();
+        } catch (SQLException a) {
+            a.printStackTrace();
+        }
+		
+	}
+			
+			
+			
+			
+			
+		});
+		
+		
+		botonmostrar = new JButton("Mostrar");
+		botonmostrar.setBounds(10, 310, 89, 23);
+		add(botonmostrar);
+		botonmostrar.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+			modelo.removeAllElements();
+			for(int a = 0; a < lista.size(); a++) {
+			modelo.addElement(lista.get(a));
+			}
+			}
+		});
+		 
+		botonactu = new JButton("Actualizar");
+        botonactu.setBounds(117, 239, 89, 23);
+		add(botonactu);
+		botonactu.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+				int actu = list.getSelectedIndex();
+				modelo.setElementAt((textField.getText()), actu);
+				 
+				
+				
+				try {
+			          connct = DriverManager.getConnection("jdbc:mysql://localhost/ingreso","root","");
+				      preSta = connct.prepareStatement("update usuario set Nombre = ?, Edad = ?, Genero = ?, Correo = ?, ID = ?, Telefono = ?");
+				      preSta.setString(1,textField.getText());
+					  preSta.setString(2,textField1.getText());
+					  preSta.setString(3,textField2.getText());
+					  preSta.setString(4,textField3.getText());
+					  preSta.setString(5,textField4.getText());
+					  preSta.setString(6,textField5.getText());
+				      preSta.executeUpdate();
+				 
+				   JOptionPane.showMessageDialog(null, "Ha sido modificado correctamente");
+				
+				 } catch(Exception a) {
+					 System.out.println("NO CONECTADO");
+						a.printStackTrace();
+					}
+				     try { 
+				    	 preSta.close();
+		            } catch (SQLException a) {
+		                a.printStackTrace();
+		            }
+					
+				}
+					
+				});
+
+				 
+	list.setBounds(229, 10, 398, 344);
+		contentPane.add(list);
+	    list.setModel(modelo);
+	   
+	  setLayout(null);
+
+
+	}	
+
+	 public void dbStatement() {
+			try {
+				Statementt = connct.createStatement();
+			    rese = Statementt.executeQuery("Nombre, Edad, Genero, Correo, ID, Telefono from usuario");
+		       while (rese.next()) {
+		    	   System.out.println(rese.getString("Recorrido completado"));
+		
+		}	
+		}catch(SQLException a) {
+			
+			  a.printStackTrace();
+	    }finally {
+	        try {
+	            this.Statementt.close();
+	            this.rese.close();
+	        } catch (SQLException e) {
+	            e.printStackTrace();
+	        }
+	    }
+			
+			}
+			
+	public void BDCerrar() {
+		        try {
+		            this.connct.close();
+		            System.out.println("Conexion cerrada");
+		        } catch (SQLException e) {
+		            e.printStackTrace();
+		        }
+		    }
+
+
+		
+		 
+
+					
+		}
